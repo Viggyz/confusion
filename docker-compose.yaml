@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  server:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile
+    image: devvig19/confusion
+    container_name: node-server
+    command: npm start
+    ports:
+      - 8000:8000
+      - 8443:8443
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/confusion
+    networks:
+      - app-network
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    image: devvig19/confusionclient
+    container_name: node-client
+    command: npm start
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
